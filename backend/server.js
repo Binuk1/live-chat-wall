@@ -12,14 +12,25 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://live-chat-wall.vercel.app',
+    /\.vercel\.app$/  // Allows all Vercel preview deployments
+  ],
+  credentials: true
+}));app.use(express.json());
 
 // Socket.io setup
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"]
+    origin: [
+      "http://localhost:5173",
+      "https://live-chat-wall.vercel.app",
+      /\.vercel\.app$/
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -368,8 +379,9 @@ process.on('SIGINT', async () => {
 
 // Start server
 connectDB().then(() => {
-  server.listen(PORT, () => {
-    console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+  // Use 0.0.0.0 to accept connections from outside (required for Render)
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n🚀 Server running on http://0.0.0.0:${PORT}`);
     console.log(`🔌 Socket.io ready`);
     if (REDIS_URL) {
       console.log(`📡 Redis configured (Upstash)`);

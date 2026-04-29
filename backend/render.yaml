@@ -1,0 +1,14 @@
+# backend/render.yaml
+services:
+  - type: web
+    name: live-chat-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: PORT
+        value: 10000
