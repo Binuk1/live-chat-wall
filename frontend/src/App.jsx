@@ -1,11 +1,9 @@
 // frontend/src/App.jsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import './App.css';
 
-//const API_URL = 'http://localhost:5000/api';
-//const SOCKET_URL = 'http://localhost:5000';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 
@@ -18,9 +16,17 @@ function App() {
   const [onlineCount, setOnlineCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const isSendingRef = useRef(false);
+  const processedMessageIds = useRef(new Set());
+
+  // Load messages on startup
+  useEffect(() => {
+    loadMessages();
+  }, []);
 
   // Initialize Socket.io connection
   useEffect(() => {
@@ -28,7 +34,22 @@ function App() {
     
     // Listen for real-time events
     socketRef.current.on('new_message', (message) => {
-      setMessages(prev => [...prev, message]);
+      setMessages(prev => {
+        // CRITICAL FIX: Prevent duplicates by checking if message already exists
+        if (processedMessageIds.current.has(message._id)) {
+          return prev; // Skip duplicate
+        }
+        
+        // Check if message already exists in current state
+        const exists = prev.some(msg => msg._id === message._id);
+        if (exists) {
+          return prev; // Skip duplicate
+        }
+        
+        // Add to processed set and return new messages array
+        processedMessageIds.current.add(message._id);
+        return [...prev, message];
+      });
     });
     
     socketRef.current.on('message_liked', (updatedMessage) => {
@@ -52,14 +73,12 @@ function App() {
       });
     });
     
+    // Cleanup on unmount
     return () => {
-      socketRef.current.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
     };
-  }, []);
-
-  // Load messages on startup
-  useEffect(() => {
-    loadMessages();
   }, []);
 
   // Auto-scroll to bottom when new messages arrive
@@ -98,30 +117,56 @@ function App() {
     try {
       const response = await axios.get(`${API_URL}/messages`);
       setMessages(response.data);
+      // Clear processed IDs set and add existing message IDs
+      processedMessageIds.current.clear();
+      response.data.forEach(msg => {
+        if (msg._id) {
+          processedMessageIds.current.add(msg._id);
+        }
+      });
       setLoading(false);
     } catch (error) {
       console.error('Error loading messages:', error);
+      setLoading(false);
     }
   };
 
   const sendMessage = async (e) => {
     e.preventDefault();
+    
+    // Prevent empty messages
     if (!inputText.trim()) return;
-
+    
+    // Prevent double-sending
+    if (isSendingRef.current) return;
+    
+    isSendingRef.current = true;
+    
     try {
-      await axios.post(`${API_URL}/messages`, {
+      const response = await axios.post(`${API_URL}/messages`, {
         username: username || 'Anonymous',
         text: inputText
       });
+      
+      // Clear input
       setInputText('');
       
       // Stop typing indicator
       if (socketRef.current) {
         socketRef.current.emit('typing', { username, isTyping: false });
       }
+      
+      // Note: Don't manually add the message here - wait for socket event
+      // The socket will broadcast it to everyone including us
+      
     } catch (error) {
       console.error('Error sending message:', error);
       alert('Failed to send message');
+    } finally {
+      // Release the lock after a short delay
+      setTimeout(() => {
+        isSendingRef.current = false;
+      }, 500);
     }
   };
 
