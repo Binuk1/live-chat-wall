@@ -1,0 +1,30 @@
+/* components/MessageList/MessageList.css */
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-16) var(--s-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+  background: var(--bg);
+}
+
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+@media (max-width: 600px) {
+  .messages-container {
+    padding: var(--s-16);
+  }
+}

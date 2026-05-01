@@ -1,0 +1,63 @@
+/* pages/Chat/Chat.css */
+
+.chat-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 57px);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Chat Header */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-16) var(--s-24);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.chat-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.chat-header h1 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--s-16);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.change-name {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--s-4) var(--s-8);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.change-name:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  .chat-header {
+    padding: var(--s-16);
+  }
+}

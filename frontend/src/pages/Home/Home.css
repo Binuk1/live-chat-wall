@@ -1,0 +1,44 @@
+/* pages/Home/Home.css */
+
+.home-page {
+  text-align: center;
+  padding-top: 80px;
+}
+
+.home-page h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: var(--s-16);
+}
+
+.home-page p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-32);
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: var(--s-16) var(--s-32);
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .home-page {
+    padding-top: 40px;
+  }
+
+  .home-page h1 {
+    font-size: 24px;
+  }
+}

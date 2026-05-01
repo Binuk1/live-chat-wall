@@ -1,0 +1,55 @@
+/* components/MessageForm/MessageForm.css */
+
+.message-form {
+  display: flex;
+  align-items: center;
+  gap: var(--s-16);
+  padding: var(--s-16) var(--s-24);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.message-form input {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-16);
+  outline: none;
+  transition: border-color 0.15s;
+  min-width: 0;
+}
+
+.message-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.message-form input:focus {
+  border-color: var(--accent);
+}
+
+.message-form button {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--s-16) var(--s-24);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.message-form button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .message-form {
+    padding: var(--s-16);
+  }
+}

@@ -1,0 +1,18 @@
+/* components/OnlineBadge/OnlineBadge.css */
+
+.online-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  color: var(--online);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.online-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--online);
+}

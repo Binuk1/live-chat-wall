@@ -1,0 +1,15 @@
+/* pages/Profile/Profile.css */
+
+.profile-page {
+  padding-top: 40px;
+}
+
+.profile-page h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: var(--s-16);
+}
+
+.profile-page p {
+  color: var(--text-secondary);
+}

@@ -1,0 +1,68 @@
+// services/api.js — API Service Layer
+// All HTTP requests centralized here
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+/**
+ * Wrapper for API responses
+ * Always returns { data, error } to prevent uncaught throws
+ */
+
+/**
+ * Fetch all messages
+ * @returns {Promise<{data: Array|null, error: string|null}>}
+ */
+export const getMessages = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/messages`);
+    return { data: response.data, error: null };
+  } catch (err) {
+    console.error('API Error - getMessages:', err.message);
+    return { data: null, error: err.message };
+  }
+};
+
+/**
+ * Send a new message
+ * @param {Object} messageData - { username, text }
+ * @returns {Promise<{data: Object|null, error: string|null}>}
+ */
+export const sendMessage = async (messageData) => {
+  try {
+    const response = await axios.post(`${API_URL}/messages`, messageData);
+    return { data: response.data, error: null };
+  } catch (err) {
+    console.error('API Error - sendMessage:', err.message);
+    return { data: null, error: err.message };
+  }
+};
+
+/**
+ * Like a message
+ * @param {string} messageId - The message ID to like
+ * @returns {Promise<{success: boolean, error: string|null}>}
+ */
+export const likeMessage = async (messageId) => {
+  try {
+    await axios.post(`${API_URL}/messages/${messageId}/like`);
+    return { success: true, error: null };
+  } catch (err) {
+    console.error('API Error - likeMessage:', err.message);
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Get online user count (REST fallback)
+ * @returns {Promise<{count: number|null, error: string|null}>}
+ */
+export const getOnlineCount = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/online-count`);
+    return { count: response.data.count, error: null };
+  } catch (err) {
+    console.error('API Error - getOnlineCount:', err.message);
+    return { count: null, error: err.message };
+  }
+};

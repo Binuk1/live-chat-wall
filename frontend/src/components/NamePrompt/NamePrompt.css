@@ -1,0 +1,68 @@
+/* components/NamePrompt/NamePrompt.css */
+
+.name-prompt {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-24);
+  z-index: 100;
+}
+
+.name-prompt-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-32);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.name-prompt-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: var(--s-8);
+}
+
+.name-prompt-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-24);
+}
+
+.name-prompt-card input {
+  width: 100%;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-16);
+  margin-bottom: var(--s-24);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.name-prompt-card input:focus {
+  border-color: var(--accent);
+}
+
+.name-prompt-card button {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--s-16);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.name-prompt-card button:hover {
+  opacity: 0.9;
+}
