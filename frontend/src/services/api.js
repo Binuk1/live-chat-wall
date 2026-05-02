@@ -2,11 +2,11 @@
 // All HTTP requests centralized here
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // Axios instance with credentials enabled (for HTTP-only cookies)
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_URL}/api`,
   withCredentials: true, // CRITICAL: sends cookies with every request
   headers: {
     'Content-Type': 'application/json'
