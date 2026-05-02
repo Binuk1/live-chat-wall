@@ -2,7 +2,9 @@
 // All HTTP requests centralized here
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Remove trailing slash if present to prevent double slashes
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = RAW_API_URL.replace(/\/$/, '');
 
 // Axios instance with credentials enabled (for HTTP-only cookies)
 const api = axios.create({
