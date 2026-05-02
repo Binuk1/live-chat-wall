@@ -27,6 +27,49 @@
   gap: var(--s-4);
 }
 
+.chat-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+}
+
+.auth-badge {
+  color: #22c55e;
+  margin-left: var(--s-4);
+  font-size: 12px;
+}
+
+.auth-button-login,
+.auth-button-logout {
+  padding: var(--s-6) var(--s-12);
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+
+.auth-button-login {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.auth-button-login:hover {
+  opacity: 0.9;
+}
+
+.auth-button-logout {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.auth-button-logout:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
 .chat-header h1 {
   font-size: 16px;
   font-weight: 600;

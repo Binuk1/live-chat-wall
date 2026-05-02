@@ -21,6 +21,7 @@ export const useSocket = () => {
   // Use ref to track if listeners are already set up
   const listenersSetup = useRef(false);
   const socketRef = useRef(null);
+  const pendingUsernameRef = useRef(null);
 
   // Get singleton socket instance
   const socket = getSocket();
@@ -44,6 +45,9 @@ export const useSocket = () => {
   const emitUserJoined = useCallback((username) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('user_joined', username);
+    } else {
+      // Queue for when socket connects
+      pendingUsernameRef.current = username;
     }
   }, []);
 
@@ -69,9 +73,20 @@ export const useSocket = () => {
     console.log('🔌 Setting up socket listeners in useSocket');
     listenersSetup.current = true;
 
+    // Handle connect - emit pending username if any
+    const handleConnect = () => {
+      if (pendingUsernameRef.current) {
+        currentSocket.emit('user_joined', pendingUsernameRef.current);
+        pendingUsernameRef.current = null;
+      }
+    };
+
+    currentSocket.on('connect', handleConnect);
+
     // CRITICAL: Cleanup function removes all listeners on unmount
     return () => {
       console.log('🧹 Cleaning up socket listeners in useSocket');
+      currentSocket.off('connect', handleConnect);
       // Note: We don't disconnect the socket (it's singleton)
       // We just ensure no duplicate listener setups
       listenersSetup.current = false;

@@ -19,6 +19,7 @@ export const getSocket = () => {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      withCredentials: true // CRITICAL: sends cookies with socket connection
     });
 
     socket.on('connect', () => {

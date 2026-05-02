@@ -5,7 +5,11 @@ const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
 const Redis = require('ioredis');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
+
+const authRoutes = require('./routes/auth.js');
+const { authenticateSocket } = require('./middleware/auth.js');
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +23,9 @@ app.use(cors({
     /\.vercel\.app$/  // Allows all Vercel preview deployments
   ],
   credentials: true
-}));app.use(express.json());
+}));
+app.use(express.json());
+app.use(cookieParser());
 
 // Socket.io setup
 const io = socketIo(server, {
@@ -124,8 +130,17 @@ const mongoClient = new MongoClient(MONGODB_URI, {
 let db;
 let messagesCollection;
 
+// Make db available to routes
+app.locals.getDb = () => db;
+
 // Track online users in memory (fallback if Redis fails)
-const onlineUsers = new Map(); // socketId -> { username, userId }
+const onlineUsers = new Map(); // socketId -> { username, userId, isAuthenticated }
+
+// API Routes (Auth)
+app.use('/api/auth', (req, res, next) => {
+  req.app.locals.db = db;
+  next();
+}, authRoutes);
 
 async function connectDB() {
   try {
@@ -259,30 +274,55 @@ app.get('/api/online-count', async (req, res) => {
   }
 });
 
+// Socket.io Authentication Middleware
+io.use(authenticateSocket);
+
 // Socket.io Connection Handling
 io.on('connection', (socket) => {
   console.log('🟢 New client connected:', socket.id);
   
-  // Handle user joining
-  socket.on('user_joined', async (username) => {
-    const userData = { 
-      username: username || 'Anonymous', 
-      joinedAt: new Date(),
-      socketId: socket.id
-    };
-    onlineUsers.set(socket.id, userData);
+  // Determine username from auth or use anonymous
+  const isAuthenticated = !!socket.user;
+  const username = socket.user?.username || null;
+  
+  // Add user to online users immediately on connection
+  const userData = {
+    username: username,
+    userId: socket.user?.userId || null,
+    isAuthenticated: isAuthenticated,
+    joinedAt: new Date(),
+    socketId: socket.id
+  };
+  onlineUsers.set(socket.id, userData);
+  
+  console.log(`👤 User connected: ${username || 'Anonymous'} (${isAuthenticated ? 'authenticated' : 'guest'})`);
+  
+  // Broadcast updated online count to everyone immediately
+  const userCount = onlineUsers.size;
+  io.emit('online_count', userCount);
+  
+  // Handle user joining (username entry for anonymous users)
+  socket.on('user_joined', async (providedUsername) => {
+    const user = onlineUsers.get(socket.id);
+    
+    // If already authenticated, use that username
+    // Otherwise use provided username
+    const finalUsername = user?.isAuthenticated 
+      ? user.username 
+      : (providedUsername || 'Anonymous');
+    
+    if (user && !user.isAuthenticated) {
+      user.username = finalUsername;
+    }
     
     // Store in Redis if available
     try {
-      await redis.hset('online_users', socket.id, username || 'Anonymous');
+      await redis.hset('online_users', socket.id, finalUsername);
     } catch (error) {
       console.log('Redis hset error (non-critical):', error.message);
     }
     
-    // Broadcast updated online count to everyone
-    const userCount = onlineUsers.size;
-    io.emit('online_count', userCount);
-    
+    // Publish count update via Redis for multi-server setups
     try {
       await redisPublisher.publish('chat', JSON.stringify({
         type: 'online_count',
@@ -293,11 +333,11 @@ io.on('connection', (socket) => {
     }
     
     // Send current online users to the new user
-    const users = Array.from(onlineUsers.values()).map(u => u.username);
+    const users = Array.from(onlineUsers.values()).map(u => u.username || 'Anonymous');
     socket.emit('online_users', users);
     
     // Broadcast user joined message
-    io.emit('user_joined_message', { username: username || 'Anonymous', count: userCount });
+    io.emit('user_joined_message', { username: finalUsername, count: userCount });
   });
   
   // Handle typing indicator
@@ -348,7 +388,7 @@ io.on('connection', (socket) => {
       console.log('Redis publish error (non-critical):', error.message);
     }
     
-    if (user) {
+    if (user?.username) {
       io.emit('user_left_message', { username: user.username, count: userCount });
     }
   });
@@ -383,6 +423,7 @@ connectDB().then(() => {
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`\n🚀 Server running on http://0.0.0.0:${PORT}`);
     console.log(`🔌 Socket.io ready`);
+    console.log(`🔐 Auth system enabled (HTTP-only cookies)`);
     if (REDIS_URL) {
       console.log(`📡 Redis configured (Upstash)`);
     } else {

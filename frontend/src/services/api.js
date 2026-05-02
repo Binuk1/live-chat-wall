@@ -4,6 +4,15 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// Axios instance with credentials enabled (for HTTP-only cookies)
+const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true, // CRITICAL: sends cookies with every request
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 /**
  * Wrapper for API responses
  * Always returns { data, error } to prevent uncaught throws
@@ -15,7 +24,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
  */
 export const getMessages = async () => {
   try {
-    const response = await axios.get(`${API_URL}/messages`);
+    const response = await api.get('/messages');
     return { data: response.data, error: null };
   } catch (err) {
     console.error('API Error - getMessages:', err.message);
@@ -30,7 +39,7 @@ export const getMessages = async () => {
  */
 export const sendMessage = async (messageData) => {
   try {
-    const response = await axios.post(`${API_URL}/messages`, messageData);
+    const response = await api.post('/messages', messageData);
     return { data: response.data, error: null };
   } catch (err) {
     console.error('API Error - sendMessage:', err.message);
@@ -45,7 +54,7 @@ export const sendMessage = async (messageData) => {
  */
 export const likeMessage = async (messageId) => {
   try {
-    await axios.post(`${API_URL}/messages/${messageId}/like`);
+    await api.post(`/messages/${messageId}/like`);
     return { success: true, error: null };
   } catch (err) {
     console.error('API Error - likeMessage:', err.message);
@@ -59,10 +68,12 @@ export const likeMessage = async (messageId) => {
  */
 export const getOnlineCount = async () => {
   try {
-    const response = await axios.get(`${API_URL}/online-count`);
+    const response = await api.get('/online-count');
     return { count: response.data.count, error: null };
   } catch (err) {
     console.error('API Error - getOnlineCount:', err.message);
     return { count: null, error: err.message };
   }
 };
+
+export default api;

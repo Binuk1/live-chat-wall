@@ -1,5 +1,7 @@
 // pages/Chat/Chat.jsx
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
 import { useUsername } from '../../hooks/useUsername.js';
 import { useMessages } from '../../hooks/useMessages.js';
 import { useSocket } from '../../hooks/useSocket.js';
@@ -13,24 +15,40 @@ import OnlineBadge from '../../components/OnlineBadge/OnlineBadge.jsx';
 import './Chat.css';
 
 function Chat() {
+  const { user, isAuthenticated, logout } = useAuth();
   const { username, showNamePrompt, setUsername, joinChat, changeName } = useUsername();
   const { messages, loading, error, sendMessage, likeMessage } = useMessages();
   const { emitTyping, emitUserJoined } = useSocket();
   const { onlineCount } = useOnlineUsers();
   const { typingUsers } = useTypingUsers();
+  const navigate = useNavigate();
+
+  // Use auth username if authenticated, otherwise use anonymous username
+  const displayName = isAuthenticated ? user?.username : (username || 'Anonymous');
+  const showPrompt = !isAuthenticated && showNamePrompt;
 
   useEffect(() => {
-    if (!showNamePrompt && username) {
+    // Emit user_joined for authenticated users on mount
+    if (isAuthenticated && user?.username) {
+      emitUserJoined(user.username);
+    }
+    // Emit for anonymous users after they enter name
+    else if (!isAuthenticated && !showNamePrompt && username) {
       emitUserJoined(username);
     }
-  }, [showNamePrompt, username, emitUserJoined]);
+  }, [isAuthenticated, user, showNamePrompt, username, emitUserJoined]);
 
   const handleJoin = () => {
     const joinedName = joinChat();
     emitUserJoined(joinedName);
   };
 
-  if (showNamePrompt) {
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  if (showPrompt) {
     return (
       <NamePrompt
         username={username}
@@ -46,18 +64,30 @@ function Chat() {
         <div className="chat-header-left">
           <h1>💬 Live Chat</h1>
           <div className="user-info">
-            <span>as <strong>{username || 'Anonymous'}</strong></span>
-            <button onClick={changeName} className="change-name">Change</button>
+            <span>
+              as <strong>{displayName}</strong>
+              {isAuthenticated && <span className="auth-badge">✓</span>}
+            </span>
+            {!isAuthenticated && (
+              <button onClick={changeName} className="change-name">Change</button>
+            )}
           </div>
         </div>
-        <OnlineBadge count={onlineCount} />
+        <div className="chat-header-right">
+          {isAuthenticated ? (
+            <button onClick={handleLogout} className="auth-button-logout">Logout</button>
+          ) : (
+            <button onClick={() => navigate('/login')} className="auth-button-login">Login</button>
+          )}
+          <OnlineBadge count={onlineCount} />
+        </div>
       </div>
 
       <TypingIndicator typingUsers={typingUsers} />
 
       <MessageList
         messages={messages}
-        currentUser={username}
+        currentUser={displayName}
         loading={loading}
         error={error}
         onLike={likeMessage}
@@ -65,7 +95,7 @@ function Chat() {
 
       <MessageForm
         onSend={sendMessage}
-        username={username}
+        username={displayName}
         onTyping={emitTyping}
       />
     </div>
