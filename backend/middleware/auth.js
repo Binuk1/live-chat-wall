@@ -89,10 +89,11 @@ const authenticateSocket = (socket, next) => {
 
 // Set auth cookie with security options
 const setAuthCookie = (res, token) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction, // HTTPS only in production
+    sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-domain in production
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/'
   });
@@ -100,10 +101,11 @@ const setAuthCookie = (res, token) => {
 
 // Clear auth cookie
 const clearAuthCookie = (res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('token', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     expires: new Date(0),
     path: '/'
   });
