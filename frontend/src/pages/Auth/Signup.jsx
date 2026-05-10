@@ -68,6 +68,7 @@ const Signup = () => {
             <input
               type="text"
               id="username"
+              autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -93,6 +94,7 @@ const Signup = () => {
             <input
               type="password"
               id="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -109,6 +111,7 @@ const Signup = () => {
             <input
               type="password"
               id="confirmPassword"
+              autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -123,12 +126,6 @@ const Signup = () => {
 
         <p className="auth-footer">
           Already have an account? <Link to="/login">Sign in</Link>
-        </p>
-        
-        <p className="auth-anonymous">
-          <Link to="/chat" className="anonymous-link">
-            Continue as Anonymous →
-          </Link>
         </p>
       </div>
     </div>

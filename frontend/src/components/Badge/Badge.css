@@ -1,0 +1,45 @@
+/* components/Badge/Badge.css */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: var(--radius-full, 9999px);
+  white-space: nowrap;
+}
+
+/* Size variants */
+.badge-sm {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.badge-sm .badge-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.badge-md {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.badge-md .badge-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.badge-lg {
+  padding: 6px 16px;
+  font-size: 14px;
+}
+
+.badge-lg .badge-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.badge-label {
+  line-height: 1;
+}

@@ -29,8 +29,6 @@ export const useMessages = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Refs to prevent duplicate listener setups
-  const listenersSetup = useRef(false);
   const isSendingRef = useRef(false);
 
   /**
@@ -93,6 +91,21 @@ export const useMessages = () => {
   }, []);
 
   /**
+   * Delete a message (moderator/admin only)
+   * @param {string} messageId - Message ID to delete
+   */
+  const deleteMessage = useCallback(async (messageId) => {
+    try {
+      const api = (await import('../services/api.js')).default;
+      await api.delete(`/moderator/messages/${messageId}`);
+      // The deletion will be confirmed via socket 'message_deleted' event
+    } catch (error) {
+      console.error('Failed to delete message:', error);
+      alert('Failed to delete message. Are you a moderator?');
+    }
+  }, []);
+
+  /**
    * Refresh messages manually
    */
   const refreshMessages = useCallback(() => {
@@ -106,14 +119,10 @@ export const useMessages = () => {
 
   // Setup socket listeners for real-time updates
   useEffect(() => {
-    // Prevent duplicate listener setup
-    if (listenersSetup.current) return;
-    
     const socket = getSocket();
     if (!socket) return;
 
     console.log('📨 Setting up message socket listeners');
-    listenersSetup.current = true;
 
     /**
      * Handler for new messages from socket
@@ -138,16 +147,24 @@ export const useMessages = () => {
       );
     };
 
+    /**
+     * Handler for message deletions from socket
+     */
+    const handleMessageDeleted = ({ id }) => {
+      setMessages((prev) => prev.filter((msg) => msg._id !== id));
+    };
+
     // Add listeners
     socket.on('new_message', handleNewMessage);
     socket.on('message_liked', handleMessageLiked);
+    socket.on('message_deleted', handleMessageDeleted);
 
     // CRITICAL: Cleanup to prevent memory leaks and duplicate listeners
     return () => {
       console.log('🧹 Cleaning up message socket listeners');
       socket.off('new_message', handleNewMessage);
       socket.off('message_liked', handleMessageLiked);
-      listenersSetup.current = false;
+      socket.off('message_deleted', handleMessageDeleted);
     };
   }, []);
 
@@ -157,6 +174,7 @@ export const useMessages = () => {
     error,
     sendMessage,
     likeMessage,
+    deleteMessage,
     refreshMessages,
   };
 };

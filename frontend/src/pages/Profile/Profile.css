@@ -2,14 +2,119 @@
 
 .profile-page {
   padding-top: 40px;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
-.profile-page h1 {
+.profile-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--s-32);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: var(--s-24);
+  padding-bottom: var(--s-24);
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--accent);
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--s-16);
+}
+
+.profile-header h1 {
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: var(--s-16);
+  margin-bottom: var(--s-12);
 }
 
-.profile-page p {
+.profile-bio {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-12);
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.profile-settings-link {
+  display: inline-block;
+  margin-top: var(--s-12);
+  padding: var(--s-8) var(--s-16);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.profile-settings-link:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.profile-badges {
+  display: flex;
+  justify-content: center;
+  gap: var(--s-8);
+  flex-wrap: wrap;
+}
+
+/* Keep banned badge style (not using Badge component for this) */
+.profile-badge.banned {
+  display: inline-block;
+  background: #ef4444;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: var(--radius-full, 9999px);
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-20);
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.profile-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-field span {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.profile-loading,
+.profile-error {
+  text-align: center;
+  padding: var(--s-40);
   color: var(--text-secondary);
 }

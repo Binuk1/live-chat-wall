@@ -51,10 +51,39 @@
   margin-bottom: var(--s-8);
 }
 
+.message-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--bg);
+  border-radius: 50%;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
 .username {
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
 }
 
 .timestamp {
@@ -86,6 +115,30 @@
   color: var(--text-primary);
   border-color: var(--text-secondary);
   background: var(--surface-light);
+}
+
+.message-actions {
+  display: flex;
+  gap: var(--s-8);
+  align-items: center;
+}
+
+.delete-btn {
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--s-4) var(--s-8);
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.7;
+}
+
+.delete-btn:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+  opacity: 1;
 }
 
 @media (max-width: 600px) {

@@ -1,13 +1,11 @@
 // pages/Chat/Chat.jsx
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { useUsername } from '../../hooks/useUsername.js';
 import { useMessages } from '../../hooks/useMessages.js';
 import { useSocket } from '../../hooks/useSocket.js';
 import { useOnlineUsers } from '../../hooks/useOnlineUsers.js';
 import { useTypingUsers } from '../../hooks/useTypingUsers.js';
-import NamePrompt from '../../components/NamePrompt/NamePrompt.jsx';
 import MessageList from '../../components/MessageList/MessageList.jsx';
 import MessageForm from '../../components/MessageForm/MessageForm.jsx';
 import TypingIndicator from '../../components/TypingIndicator/TypingIndicator.jsx';
@@ -16,88 +14,84 @@ import './Chat.css';
 
 function Chat() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { username, showNamePrompt, setUsername, joinChat, changeName } = useUsername();
-  const { messages, loading, error, sendMessage, likeMessage } = useMessages();
-  const { emitTyping, emitUserJoined } = useSocket();
+  const { messages, loading, error, sendMessage, likeMessage, deleteMessage } = useMessages();
+  const { emitTyping } = useSocket();
   const { onlineCount } = useOnlineUsers();
   const { typingUsers } = useTypingUsers();
   const navigate = useNavigate();
+  
+  // Ref for scrolling messages area
+  const messagesAreaRef = useRef(null);
 
-  // Use auth username if authenticated, otherwise use anonymous username
-  const displayName = isAuthenticated ? user?.username : (username || 'Anonymous');
-  const showPrompt = !isAuthenticated && showNamePrompt;
-
+  // Scroll to bottom when messages load or change
   useEffect(() => {
-    // Emit user_joined for authenticated users on mount
-    if (isAuthenticated && user?.username) {
-      emitUserJoined(user.username);
+    if (messagesAreaRef.current && !loading) {
+      messagesAreaRef.current.scrollTop = messagesAreaRef.current.scrollHeight;
     }
-    // Emit for anonymous users after they enter name
-    else if (!isAuthenticated && !showNamePrompt && username) {
-      emitUserJoined(username);
-    }
-  }, [isAuthenticated, user, showNamePrompt, username, emitUserJoined]);
+  }, [messages, loading]);
 
-  const handleJoin = () => {
-    const joinedName = joinChat();
-    emitUserJoined(joinedName);
-  };
+  const displayName = isAuthenticated ? user?.username : null;
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate('/');
   };
-
-  if (showPrompt) {
-    return (
-      <NamePrompt
-        username={username}
-        setUsername={setUsername}
-        onJoin={handleJoin}
-      />
-    );
-  }
 
   return (
     <div className="chat-page">
-      <div className="chat-header">
-        <div className="chat-header-left">
-          <h1>💬 Live Chat</h1>
-          <div className="user-info">
-            <span>
-              as <strong>{displayName}</strong>
-              {isAuthenticated && <span className="auth-badge">✓</span>}
-            </span>
-            {!isAuthenticated && (
-              <button onClick={changeName} className="change-name">Change</button>
+      <div className="chat-box">
+        {/* Sticky Header */}
+        <div className="chat-header">
+          <div className="chat-header-left">
+            {isAuthenticated ? (
+              <span className="chat-status">
+                you are chatting as <strong>{displayName}</strong>
+                <span className="auth-badge">✓</span>
+              </span>
+            ) : (
+              <span className="chat-status">Live Chat</span>
             )}
           </div>
+          <div className="chat-header-right">
+            {isAuthenticated && (
+              <button onClick={handleLogout} className="auth-button-logout">Logout</button>
+            )}
+            <OnlineBadge count={onlineCount} />
+          </div>
         </div>
-        <div className="chat-header-right">
+
+        {/* Scrollable Messages Area */}
+        <div className="chat-messages-area" ref={messagesAreaRef}>
+          <TypingIndicator typingUsers={typingUsers} />
+          <MessageList
+            messages={messages}
+            currentUser={displayName}
+            loading={loading}
+            error={error}
+            onLike={likeMessage}
+            userRole={user?.role}
+            onDelete={deleteMessage}
+          />
+        </div>
+
+        {/* Sticky Message Form or Login Prompt */}
+        <div className="chat-form-wrapper">
           {isAuthenticated ? (
-            <button onClick={handleLogout} className="auth-button-logout">Logout</button>
+            <MessageForm
+              onSend={sendMessage}
+              username={displayName}
+              onTyping={emitTyping}
+            />
           ) : (
-            <button onClick={() => navigate('/login')} className="auth-button-login">Login</button>
+            <div className="chat-login-prompt">
+              <p>Want to join the conversation?</p>
+              <Link to="/login" className="prompt-link">Login</Link>
+              <span className="prompt-or">or</span>
+              <Link to="/signup" className="prompt-link">Sign Up</Link>
+            </div>
           )}
-          <OnlineBadge count={onlineCount} />
         </div>
       </div>
-
-      <TypingIndicator typingUsers={typingUsers} />
-
-      <MessageList
-        messages={messages}
-        currentUser={displayName}
-        loading={loading}
-        error={error}
-        onLike={likeMessage}
-      />
-
-      <MessageForm
-        onSend={sendMessage}
-        username={displayName}
-        onTyping={emitTyping}
-      />
     </div>
   );
 }

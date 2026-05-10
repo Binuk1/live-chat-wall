@@ -3,11 +3,11 @@ import { useRef, useEffect } from 'react';
 import MessageCard from '../MessageCard/MessageCard.jsx';
 import './MessageList.css';
 
-function MessageList({ messages, currentUser, loading, error, onLike }) {
+function MessageList({ messages, currentUser, loading, error, onLike, userRole, onDelete }) {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messages]);
 
   if (loading) {
@@ -34,6 +34,8 @@ function MessageList({ messages, currentUser, loading, error, onLike }) {
           message={msg}
           isOwn={msg.username === currentUser}
           onLike={onLike}
+          userRole={userRole}
+          onDelete={onDelete}
         />
       ))}
       <div ref={messagesEndRef} />

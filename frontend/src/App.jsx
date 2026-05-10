@@ -6,9 +6,13 @@ import Layout from './components/Layout/Layout.jsx';
 import Home from './pages/Home/Home.jsx';
 import Chat from './pages/Chat/Chat.jsx';
 import Profile from './pages/Profile/Profile.jsx';
+import Admin from './pages/Admin/Admin.jsx';
+import Settings from './pages/Settings/Settings.jsx';
 import Login from './pages/Auth/Login.jsx';
 import Signup from './pages/Auth/Signup.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
+import NotFound from './pages/NotFound/NotFound.jsx';
+import Banned from './pages/Banned/Banned.jsx';
+import ProtectedRoute from './components/ProtectedRoute/index.jsx';
 
 function App() {
   return (
@@ -17,6 +21,7 @@ function App() {
         {/* Public routes (outside Layout) */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/banned" element={<Banned />} />
 
         {/* Routes with Layout */}
         <Route path="/" element={<Layout />}>
@@ -27,6 +32,18 @@ function App() {
               <Profile />
             </ProtectedRoute>
           } />
+          <Route path="settings" element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } />
+          <Route path="admin" element={
+            <ProtectedRoute requireAdmin>
+              <Admin />
+            </ProtectedRoute>
+          } />
+          {/* Catch-all 404 route */}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </AuthProvider>

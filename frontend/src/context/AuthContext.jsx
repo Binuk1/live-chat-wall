@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../services/auth.js';
+import { disconnectSocket } from '../services/socket.js';
 
 const AuthContext = createContext(null);
 
@@ -28,18 +29,39 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (email, password) => {
     const response = await authApi.login(email, password);
     setUser(response.user);
+    // Reconnect socket to pick up new auth cookie
+    await disconnectSocket();
     return response;
   }, []);
 
   const signup = useCallback(async (username, email, password) => {
     const response = await authApi.signup(username, email, password);
     setUser(response.user);
+    // Reconnect socket to pick up new auth cookie
+    await disconnectSocket();
     return response;
   }, []);
 
   const logout = useCallback(async () => {
     await authApi.logout();
     setUser(null);
+    // Disconnect socket to clean up connection
+    await disconnectSocket();
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const response = await authApi.getMe();
+      // API returns { authenticated: true, user: {...} }
+      setUser(response.user || response);
+    } catch (error) {
+      console.log('Failed to refresh user:', error.message);
+    }
   }, []);
 
   const value = {
@@ -48,7 +70,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     signup,
-    logout
+    logout,
+    refreshUser
   };
 
   return (

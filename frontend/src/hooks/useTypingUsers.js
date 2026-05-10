@@ -1,6 +1,6 @@
 // hooks/useTypingUsers.js — Typing Indicators State
 // Separate from online count for clarity
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { getSocket } from '../services/socket.js';
 
 /**
@@ -10,17 +10,12 @@ import { getSocket } from '../services/socket.js';
  */
 export const useTypingUsers = () => {
   const [typingUsers, setTypingUsers] = useState([]);
-  const listenersSetup = useRef(false);
 
   useEffect(() => {
-    // Prevent duplicate listener setup
-    if (listenersSetup.current) return;
-    
     const socket = getSocket();
     if (!socket) return;
 
     console.log('⌨️ Setting up typing indicator socket listeners');
-    listenersSetup.current = true;
 
     const handleUserTyping = ({ username, isTyping }) => {
       setTypingUsers((prev) => {
@@ -39,7 +34,6 @@ export const useTypingUsers = () => {
     return () => {
       console.log('🧹 Cleaning up typing indicator listeners');
       socket.off('user_typing', handleUserTyping);
-      listenersSetup.current = false;
     };
   }, []);
 

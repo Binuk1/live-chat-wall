@@ -40,6 +40,7 @@ const Login = () => {
             <input
               type="email"
               id="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -52,6 +53,7 @@ const Login = () => {
             <input
               type="password"
               id="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -67,12 +69,6 @@ const Login = () => {
 
         <p className="auth-footer">
           Don&apos;t have an account? <Link to="/signup">Sign up</Link>
-        </p>
-        
-        <p className="auth-anonymous">
-          <Link to="/chat" className="anonymous-link">
-            Continue as Anonymous →
-          </Link>
         </p>
       </div>
     </div>

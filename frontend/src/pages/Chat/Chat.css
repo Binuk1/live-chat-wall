@@ -1,16 +1,32 @@
 /* pages/Chat/Chat.css */
 
+/* Page Container - centers the chat box */
 .chat-page {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  height: calc(100vh - 57px);
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-24);
+  min-height: calc(100vh - 57px);
+  background: var(--bg);
 }
 
-/* Chat Header */
+/* Chat Box - centered, bordered, shadowed */
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: calc(100vh - 105px);
+  max-height: 800px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Chat Header - sticky at top */
 .chat-header {
   display: flex;
   align-items: center;
@@ -19,12 +35,15 @@
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .chat-header-left {
   display: flex;
-  flex-direction: column;
-  gap: var(--s-4);
+  align-items: center;
+  gap: var(--s-12);
 }
 
 .chat-header-right {
@@ -40,7 +59,8 @@
 }
 
 .auth-button-login,
-.auth-button-logout {
+.auth-button-logout,
+.auth-button-signup {
   padding: var(--s-6) var(--s-12);
   font-size: 13px;
   border-radius: var(--radius-sm);
@@ -70,37 +90,96 @@
   border-color: var(--text-secondary);
 }
 
-.chat-header h1 {
-  font-size: 16px;
-  font-weight: 600;
+.auth-button-signup {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: var(--s-16);
-  font-size: 13px;
+.auth-button-signup:hover {
+  opacity: 0.9;
+}
+
+.chat-status {
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
-.change-name {
-  font-size: 12px;
-  color: var(--text-muted);
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--s-4) var(--s-8);
-  cursor: pointer;
-  transition: all 0.15s;
+.chat-status strong {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
-.change-name:hover {
-  color: var(--text-primary);
-  border-color: var(--text-secondary);
+/* Scrollable Messages Area */
+.chat-messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-16) var(--s-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+/* Sticky Message Form Wrapper */
+.chat-form-wrapper {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 10;
+}
+
+/* Login Prompt for Unauthenticated Users */
+.chat-login-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-12);
+  padding: var(--s-16) var(--s-24);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.chat-login-prompt span:first-child {
+  font-size: 18px;
+}
+
+.chat-login-prompt p {
+  margin: 0;
+}
+
+.prompt-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.prompt-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.prompt-or {
+  color: var(--text-muted);
 }
 
 @media (max-width: 600px) {
   .chat-header {
     padding: var(--s-16);
+  }
+  
+  .chat-page {
+    padding: var(--s-12);
+  }
+  
+  .chat-box {
+    height: calc(100vh - 81px);
+    max-height: none;
+  }
+  
+  .chat-messages-area {
+    padding: var(--s-12) var(--s-16);
   }
 }

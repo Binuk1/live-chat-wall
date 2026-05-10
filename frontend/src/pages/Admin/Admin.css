@@ -1,0 +1,290 @@
+/* pages/Admin/Admin.css */
+
+.admin-page {
+  padding: var(--s-24);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-page h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: var(--s-24);
+}
+
+/* Stats */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s-16);
+  margin-bottom: var(--s-24);
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-20);
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: var(--s-8);
+}
+
+/* Tabs */
+.admin-tabs {
+  display: flex;
+  gap: var(--s-8);
+  margin-bottom: var(--s-16);
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-tabs button {
+  padding: var(--s-12) var(--s-20);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.admin-tabs button:hover {
+  color: var(--text-primary);
+}
+
+.admin-tabs button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Search */
+.admin-search {
+  margin-bottom: var(--s-16);
+}
+
+.admin-search input {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--s-12) var(--s-16);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.admin-search input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Table */
+.admin-table-container {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--s-12) var(--s-16);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.admin-table tr:hover {
+  background: var(--bg);
+}
+
+.admin-table tr.banned {
+  background: #fef2f2;
+}
+
+.admin-table tr.banned:hover {
+  background: #fee2e2;
+}
+
+/* User cell */
+.user-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-cell strong {
+  color: var(--text-primary);
+}
+
+.user-email {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Status */
+.status-active {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.status-banned {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: var(--s-8);
+  flex-wrap: wrap;
+}
+
+.action-buttons select,
+.action-buttons button {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-buttons select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.btn-unban {
+  background: #22c55e;
+  color: white;
+  border: none;
+}
+
+.btn-unban:hover {
+  background: #16a34a;
+}
+
+.ban-select {
+  color: #ef4444;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+}
+
+.action-buttons button:disabled,
+.action-buttons select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Messages */
+.admin-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+.admin-message-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-16);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--s-8);
+  font-size: 13px;
+}
+
+.message-header strong {
+  color: var(--text-primary);
+}
+
+.message-time {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.message-text {
+  color: var(--text-primary);
+  margin-bottom: var(--s-12);
+  word-break: break-word;
+}
+
+.message-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-likes {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Loading & Error */
+.admin-loading,
+.admin-error {
+  text-align: center;
+  padding: var(--s-40);
+  color: var(--text-secondary);
+}
+
+.admin-error {
+  color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: var(--s-8);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}

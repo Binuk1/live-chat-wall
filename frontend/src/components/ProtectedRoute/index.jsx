@@ -1,8 +1,9 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import NotFound from '../../pages/NotFound/NotFound.jsx';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+const ProtectedRoute = ({ children, requireAdmin }) => {
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -15,6 +16,11 @@ const ProtectedRoute = ({ children }) => {
         <div>Loading...</div>
       </div>
     );
+  }
+
+  if (requireAdmin && user?.role !== 'admin') {
+    // Show 404 for ANY non-admin (including guests) - hides that admin page exists
+    return <NotFound />;
   }
 
   if (!isAuthenticated) {

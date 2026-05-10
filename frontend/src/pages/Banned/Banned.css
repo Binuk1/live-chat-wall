@@ -1,0 +1,76 @@
+/* pages/Banned/Banned.css */
+
+.banned-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: var(--s-24);
+}
+
+.banned-content {
+  max-width: 450px;
+  padding: var(--s-32);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.banned-icon {
+  font-size: 64px;
+  margin-bottom: var(--s-16);
+}
+
+.banned-content h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ef4444;
+  margin-bottom: var(--s-12);
+}
+
+.banned-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-20);
+  line-height: 1.5;
+}
+
+.banned-details {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+  padding: var(--s-16);
+  margin-bottom: var(--s-24);
+}
+
+.banned-until {
+  font-size: 14px;
+  color: #991b1b;
+  margin-bottom: var(--s-8);
+}
+
+.banned-until strong {
+  display: block;
+  margin-bottom: var(--s-4);
+}
+
+.banned-countdown {
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+.banned-home-link {
+  display: inline-block;
+  padding: var(--s-12) var(--s-24);
+  background: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.banned-home-link:hover {
+  opacity: 0.9;
+}

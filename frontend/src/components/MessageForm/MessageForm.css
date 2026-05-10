@@ -3,23 +3,23 @@
 .message-form {
   display: flex;
   align-items: center;
-  gap: var(--s-16);
+  gap: var(--s-12);
   padding: var(--s-16) var(--s-24);
   background: var(--surface);
-  border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 
 .message-form input {
   flex: 1;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-primary);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: var(--s-16);
+  padding: var(--s-16) var(--s-18);
+  min-height: 48px;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   min-width: 0;
 }
 
@@ -29,6 +29,7 @@
 
 .message-form input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .message-form button {
@@ -38,14 +39,20 @@
   background: var(--accent);
   border: none;
   border-radius: var(--radius);
-  padding: var(--s-16) var(--s-24);
+  padding: var(--s-14) var(--s-28);
+  min-height: 48px;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s;
   flex-shrink: 0;
 }
 
 .message-form button:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.message-form button:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 600px) {

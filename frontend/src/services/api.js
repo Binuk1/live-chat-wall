@@ -15,6 +15,18 @@ const api = axios.create({
   }
 });
 
+// Handle ban errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 403 && error.response?.data?.error === 'Account banned') {
+      const bannedUntil = encodeURIComponent(error.response.data.bannedUntil);
+      window.location.href = `/banned?until=${bannedUntil}`;
+    }
+    return Promise.reject(error);
+  }
+);
+
 /**
  * Wrapper for API responses
  * Always returns { data, error } to prevent uncaught throws

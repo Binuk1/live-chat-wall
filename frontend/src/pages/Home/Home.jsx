@@ -21,7 +21,7 @@ function Home() {
         </div>
       ) : (
         <div className="home-actions">
-          <Link to="/chat" className="btn-primary">Join as Anonymous</Link>
+          <Link to="/chat" className="btn-primary">View Chat</Link>
           <Link to="/login" className="btn-secondary">Login</Link>
           <Link to="/signup" className="btn-secondary">Sign Up</Link>
         </div>

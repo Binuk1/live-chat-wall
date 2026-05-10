@@ -33,6 +33,12 @@ export const getSocket = () => {
     socket.on('connect_error', (error) => {
       console.error('❌ Socket connection error:', error.message);
     });
+
+    socket.on('banned', (data) => {
+      console.log('🚫 Account banned:', data);
+      const bannedUntil = encodeURIComponent(data.bannedUntil);
+      window.location.href = `/banned?until=${bannedUntil}`;
+    });
   }
   return socket;
 };
@@ -40,13 +46,37 @@ export const getSocket = () => {
 /**
  * Disconnect and destroy the socket instance
  * Call this only on app shutdown (e.g., logout)
+ * @returns {Promise} Resolves when disconnect is complete
  */
 export const disconnectSocket = () => {
-  if (socket) {
-    console.log('🔌 Disconnecting socket...');
-    socket.disconnect();
-    socket = null;
-  }
+  return new Promise((resolve) => {
+    if (socket) {
+      console.log('🔌 Disconnecting socket...');
+      const oldSocket = socket;
+      
+      // Wait for disconnect to complete
+      const onDisconnect = () => {
+        console.log('🔴 Socket fully disconnected');
+        if (socket === oldSocket) {
+          socket = null;
+        }
+        resolve();
+      };
+      
+      oldSocket.once('disconnect', onDisconnect);
+      oldSocket.disconnect();
+      
+      // Fallback: force null after 500ms if disconnect event doesn't fire
+      setTimeout(() => {
+        if (socket === oldSocket) {
+          socket = null;
+        }
+        resolve();
+      }, 500);
+    } else {
+      resolve();
+    }
+  });
 };
 
 /**

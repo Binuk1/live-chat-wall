@@ -46,7 +46,12 @@ const createUserDoc = async (userData) => {
     email: userData.email.toLowerCase().trim(),
     password: hashedPassword,
     isAnonymous: false,
+    role: 'user', // 'user', 'moderator', 'admin'
+    bannedUntil: null,
+    bannedBy: null,
     createdAt: new Date(),
+    bio: '',
+    avatar: null, // emoji or null for default
     updatedAt: new Date()
   };
 };

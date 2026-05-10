@@ -165,4 +165,130 @@ router.get('/check', async (req, res) => {
   }
 });
 
+/**
+ * PUT /api/auth/me — Update user profile
+ */
+router.put('/me', authenticateToken, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const usersCollection = db.collection('users');
+    
+    const { bio, avatar } = req.body;
+    const updates = {};
+    
+    if (bio !== undefined) {
+      if (bio.length > 200) {
+        return res.status(400).json({ error: 'Bio must be under 200 characters' });
+      }
+      updates.bio = bio.trim();
+    }
+    
+    if (avatar !== undefined) {
+      updates.avatar = avatar || null;
+    }
+    
+    updates.updatedAt = new Date();
+    
+    const result = await usersCollection.updateOne(
+      { _id: new ObjectId(req.user.userId) },
+      { $set: updates }
+    );
+    
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json({ success: true, message: 'Profile updated' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/auth/change-password — Change user password
+ */
+router.post('/change-password', authenticateToken, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const usersCollection = db.collection('users');
+    
+    const { currentPassword, newPassword } = req.body;
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current and new password required' });
+    }
+    
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters' });
+    }
+    
+    // Get user
+    const user = await usersCollection.findOne(
+      { _id: new ObjectId(req.user.userId) },
+      { projection: { password: 1 } }
+    );
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Verify current password
+    const { verifyPassword } = require('../models/User.js');
+    const isValid = await verifyPassword(currentPassword, user.password);
+    
+    if (!isValid) {
+      return res.status(400).json({ error: 'Current password is incorrect' });
+    }
+    
+    // Hash new password
+    const { hashPassword } = require('../models/User.js');
+    const hashedPassword = await hashPassword(newPassword);
+    
+    await usersCollection.updateOne(
+      { _id: new ObjectId(req.user.userId) },
+      { $set: { password: hashedPassword, updatedAt: new Date() } }
+    );
+    
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * DELETE /api/auth/me — Delete user account
+ */
+router.delete('/me', authenticateToken, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const usersCollection = db.collection('users');
+    const messagesCollection = db.collection('messages');
+    
+    const userId = req.user.userId;
+    
+    // Delete user's messages
+    await messagesCollection.deleteMany({ userId });
+    
+    // Delete user
+    const result = await usersCollection.deleteOne({
+      _id: new ObjectId(userId)
+    });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Clear auth cookie
+    const { clearAuthCookie } = require('../middleware/auth.js');
+    clearAuthCookie(res);
+    
+    res.json({ success: true, message: 'Account deleted' });
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

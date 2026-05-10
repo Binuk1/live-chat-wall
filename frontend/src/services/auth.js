@@ -42,5 +42,26 @@ export const authApi = {
     } catch {
       return { authenticated: false };
     }
+  },
+
+  // Update profile (bio, avatar)
+  updateProfile: async (data) => {
+    const response = await api.put(`${API_URL}/api/auth/me`, data);
+    return response.data;
+  },
+
+  // Change password
+  changePassword: async (currentPassword, newPassword) => {
+    const response = await api.post(`${API_URL}/api/auth/change-password`, {
+      currentPassword,
+      newPassword
+    });
+    return response.data;
+  },
+
+  // Delete account
+  deleteAccount: async () => {
+    const response = await api.delete(`${API_URL}/api/auth/me`);
+    return response.data;
   }
 };
