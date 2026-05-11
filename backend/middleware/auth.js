@@ -31,6 +31,9 @@ const authenticateToken = (req, res, next) => {
   // Check for token in cookies or Authorization header
   let token = req.cookies?.token;
   
+  console.log('[Auth] Cookies received:', req.cookies ? Object.keys(req.cookies) : 'none');
+  console.log('[Auth] User-Agent:', req.headers['user-agent']?.substring(0, 50));
+  
   if (!token && req.headers.authorization) {
     const authHeader = req.headers.authorization;
     if (authHeader.startsWith('Bearer ')) {
@@ -93,8 +96,9 @@ const setAuthCookie = (res, token) => {
   const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('token', token, {
     httpOnly: true,
-    secure: isProduction, // HTTPS only in production
+    secure: true, // Always use HTTPS
     sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-domain in production
+    partitioned: isProduction, // For Privacy Sandbox/CHIPS support
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/'
   });
@@ -105,8 +109,9 @@ const clearAuthCookie = (res) => {
   const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('token', '', {
     httpOnly: true,
-    secure: isProduction,
+    secure: true,
     sameSite: isProduction ? 'none' : 'lax',
+    partitioned: isProduction,
     expires: new Date(0),
     path: '/'
   });
