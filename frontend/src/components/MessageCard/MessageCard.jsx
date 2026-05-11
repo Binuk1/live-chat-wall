@@ -1,7 +1,7 @@
 // components/MessageCard/MessageCard.jsx
 import './MessageCard.css';
 
-function MessageCard({ message, isOwn, onLike, userRole, onDelete }) {
+function MessageCard({ message, isOwn, onLike, userRole, onDelete, onViewProfile }) {
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -12,12 +12,28 @@ function MessageCard({ message, isOwn, onLike, userRole, onDelete }) {
   // Get avatar display (emoji or first letter)
   const avatarDisplay = message.avatar || message.username?.charAt(0).toUpperCase();
 
+  const handleProfileClick = () => {
+    if (onViewProfile && message.username) {
+      onViewProfile(message.username);
+    }
+  };
+
   return (
     <div className={`message-row ${isOwn ? 'own' : 'other'}`}>
       <div className="message-bubble">
         <div className="message-header">
-          <span className="message-avatar">{avatarDisplay}</span>
-          <span className="username">
+          <span 
+            className="message-avatar clickable" 
+            onClick={handleProfileClick}
+            title="View profile"
+          >
+            {avatarDisplay}
+          </span>
+          <span 
+            className="username clickable" 
+            onClick={handleProfileClick}
+            title="View profile"
+          >
             {message.username}
             {message.isAuthenticated && (
               <span className="auth-badge" title="Verified User">✓</span>

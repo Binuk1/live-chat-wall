@@ -15,8 +15,6 @@ export const useTypingUsers = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    console.log('⌨️ Setting up typing indicator socket listeners');
-
     const handleUserTyping = ({ username, isTyping }) => {
       setTypingUsers((prev) => {
         if (isTyping && !prev.includes(username)) {
@@ -32,7 +30,6 @@ export const useTypingUsers = () => {
 
     // Cleanup
     return () => {
-      console.log('🧹 Cleaning up typing indicator listeners');
       socket.off('user_typing', handleUserTyping);
     };
   }, []);

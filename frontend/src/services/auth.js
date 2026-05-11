@@ -63,5 +63,11 @@ export const authApi = {
   deleteAccount: async () => {
     const response = await api.delete(`${API_URL}/api/auth/me`);
     return response.data;
+  },
+
+  // Get user by username (public profile)
+  getUserByUsername: async (username) => {
+    const response = await api.get(`${API_URL}/api/auth/user/${username}`);
+    return response.data;
   }
 };

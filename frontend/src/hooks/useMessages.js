@@ -122,8 +122,6 @@ export const useMessages = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    console.log('📨 Setting up message socket listeners');
-
     /**
      * Handler for new messages from socket
      */
@@ -161,7 +159,6 @@ export const useMessages = () => {
 
     // CRITICAL: Cleanup to prevent memory leaks and duplicate listeners
     return () => {
-      console.log('🧹 Cleaning up message socket listeners');
       socket.off('new_message', handleNewMessage);
       socket.off('message_liked', handleMessageLiked);
       socket.off('message_deleted', handleMessageDeleted);

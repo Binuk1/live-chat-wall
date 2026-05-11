@@ -1,29 +1,45 @@
 // pages/Profile/Profile.jsx
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { authApi } from '../../services/auth.js';
+import { useAuth } from '../../context/AuthContext.jsx';
 import Badge from '../../components/Badge/Badge.jsx';
 import './Profile.css';
 
 function Profile() {
+  const { username } = useParams();
+  const { user: currentUser } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const isOwnProfile = !username || (currentUser && currentUser.username === username);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await authApi.getMe();
+        setLoading(true);
+        setError(null);
+        
+        let response;
+        if (isOwnProfile) {
+          // Viewing own profile - requires auth
+          response = await authApi.getMe();
+        } else {
+          // Viewing other user's profile - public
+          response = await authApi.getUserByUsername(username);
+        }
+        
         setUser(response.user);
       } catch (err) {
-        setError('Failed to load profile');
+        setError(err.response?.data?.error || 'Failed to load profile');
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [username, isOwnProfile]);
 
   if (loading) {
     return (
@@ -66,9 +82,14 @@ function Profile() {
               <span className="profile-badge banned">Banned until {new Date(user.bannedUntil).toLocaleDateString()}</span>
             )}
           </div>
-          <Link to="/settings" className="profile-settings-link">
-            Edit Settings
-          </Link>
+          {isOwnProfile && (
+            <Link to="/settings" className="profile-settings-link">
+              Edit Settings
+            </Link>
+          )}
+          {!isOwnProfile && (
+            <span className="profile-viewing">Viewing {user.username}'s Profile</span>
+          )}
         </div>
 
         <div className="profile-details">
@@ -77,10 +98,12 @@ function Profile() {
             <span>{user.username}</span>
           </div>
           
-          <div className="profile-field">
-            <label>Email</label>
-            <span>{user.email}</span>
-          </div>
+          {isOwnProfile && (
+            <div className="profile-field">
+              <label>Email</label>
+              <span>{user.email}</span>
+            </div>
+          )}
           
           <div className="profile-field">
             <label>Member Since</label>

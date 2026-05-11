@@ -13,7 +13,6 @@ let socket = null;
  */
 export const getSocket = () => {
   if (!socket) {
-    console.log('🔌 Creating socket connection...');
     socket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -23,19 +22,18 @@ export const getSocket = () => {
     });
 
     socket.on('connect', () => {
-      console.log('✅ Socket connected:', socket.id);
+      // Connected
     });
 
     socket.on('disconnect', (reason) => {
-      console.log('🔴 Socket disconnected:', reason);
+      // Disconnected
     });
 
     socket.on('connect_error', (error) => {
-      console.error('❌ Socket connection error:', error.message);
+      console.error('Socket connection error:', error.message);
     });
 
     socket.on('banned', (data) => {
-      console.log('🚫 Account banned:', data);
       const bannedUntil = encodeURIComponent(data.bannedUntil);
       window.location.href = `/banned?until=${bannedUntil}`;
     });
@@ -51,12 +49,10 @@ export const getSocket = () => {
 export const disconnectSocket = () => {
   return new Promise((resolve) => {
     if (socket) {
-      console.log('🔌 Disconnecting socket...');
       const oldSocket = socket;
       
       // Wait for disconnect to complete
       const onDisconnect = () => {
-        console.log('🔴 Socket fully disconnected');
         if (socket === oldSocket) {
           socket = null;
         }
@@ -66,7 +62,7 @@ export const disconnectSocket = () => {
       oldSocket.once('disconnect', onDisconnect);
       oldSocket.disconnect();
       
-      // Fallback: force null after 500ms if disconnect event doesn't fire
+      // Fallback: resolve after 500ms if disconnect event doesn't fire
       setTimeout(() => {
         if (socket === oldSocket) {
           socket = null;

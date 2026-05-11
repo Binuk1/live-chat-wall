@@ -23,7 +23,6 @@ export const useOnlineUsers = () => {
         if (response.ok) {
           const data = await response.json();
           setOnlineCount(data.count);
-          console.log('👥 Initial online count from API:', data.count);
         }
       } catch (error) {
         console.log('Failed to fetch initial count:', error.message);
@@ -35,10 +34,7 @@ export const useOnlineUsers = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    console.log('👥 Setting up online count socket listeners');
-
     const handleOnlineCount = (count) => {
-      console.log("online count from socket: " + count);
       setOnlineCount(count);
     };
 
@@ -46,7 +42,6 @@ export const useOnlineUsers = () => {
 
     // Cleanup
     return () => {
-      console.log('🧹 Cleaning up online count listeners');
       socket.off('online_count', handleOnlineCount);
     };
   }, []);

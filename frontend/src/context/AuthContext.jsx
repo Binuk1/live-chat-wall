@@ -13,14 +13,11 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const response = await authApi.checkAuth();
-        console.log('[Auth] Check response:', response);
         if (response.authenticated) {
           setUser(response.user);
-        } else {
-          console.log('[Auth] Not authenticated');
         }
       } catch (error) {
-        console.error('[Auth] Check failed:', error.message);
+        console.log('Auth check failed:', error.message);
       } finally {
         setLoading(false);
       }

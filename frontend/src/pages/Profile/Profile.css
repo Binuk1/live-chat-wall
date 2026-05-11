@@ -65,8 +65,16 @@
 }
 
 .profile-settings-link:hover {
-  background: var(--surface);
-  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.profile-viewing {
+  display: inline-block;
+  padding: var(--s-8) var(--s-16);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-style: italic;
 }
 
 .profile-badges {

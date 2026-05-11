@@ -31,9 +31,6 @@ const authenticateToken = (req, res, next) => {
   // Check for token in cookies or Authorization header
   let token = req.cookies?.token;
   
-  console.log('[Auth] Cookies received:', req.cookies ? Object.keys(req.cookies) : 'none');
-  console.log('[Auth] User-Agent:', req.headers['user-agent']?.substring(0, 50));
-  
   if (!token && req.headers.authorization) {
     const authHeader = req.headers.authorization;
     if (authHeader.startsWith('Bearer ')) {

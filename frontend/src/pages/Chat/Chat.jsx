@@ -37,6 +37,10 @@ function Chat() {
     navigate('/');
   };
 
+  const handleViewProfile = (username) => {
+    navigate(`/profile/${username}`);
+  };
+
   return (
     <div className="chat-page">
       <div className="chat-box">
@@ -71,6 +75,7 @@ function Chat() {
             onLike={likeMessage}
             userRole={user?.role}
             onDelete={deleteMessage}
+            onViewProfile={handleViewProfile}
           />
         </div>
 

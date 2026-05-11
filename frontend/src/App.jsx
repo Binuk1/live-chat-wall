@@ -13,10 +13,12 @@ import Signup from './pages/Auth/Signup.jsx';
 import NotFound from './pages/NotFound/NotFound.jsx';
 import Banned from './pages/Banned/Banned.jsx';
 import ProtectedRoute from './components/ProtectedRoute/index.jsx';
+import DevToolsWarning from './components/DevToolsWarning/DevToolsWarning.jsx';
 
 function App() {
   return (
     <AuthProvider>
+      <DevToolsWarning />
       <Routes>
         {/* Public routes (outside Layout) */}
         <Route path="/login" element={<Login />} />
@@ -32,6 +34,7 @@ function App() {
               <Profile />
             </ProtectedRoute>
           } />
+          <Route path="profile/:username" element={<Profile />} />
           <Route path="settings" element={
             <ProtectedRoute>
               <Settings />

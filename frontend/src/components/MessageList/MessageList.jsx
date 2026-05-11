@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import MessageCard from '../MessageCard/MessageCard.jsx';
 import './MessageList.css';
 
-function MessageList({ messages, currentUser, loading, error, onLike, userRole, onDelete }) {
+function MessageList({ messages, currentUser, loading, error, onLike, userRole, onDelete, onViewProfile }) {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ function MessageList({ messages, currentUser, loading, error, onLike, userRole, 
           onLike={onLike}
           userRole={userRole}
           onDelete={onDelete}
+          onViewProfile={onViewProfile}
         />
       ))}
       <div ref={messagesEndRef} />

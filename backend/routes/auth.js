@@ -166,6 +166,31 @@ router.get('/check', async (req, res) => {
 });
 
 /**
+ * GET /api/auth/user/:username — Get public user profile by username
+ */
+router.get('/user/:username', async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const usersCollection = db.collection('users');
+    
+    const user = await usersCollection.findOne(
+      { username: req.params.username },
+      { projection: { password: 0, email: 0 } }
+    );
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json({ user });
+    
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+/**
  * PUT /api/auth/me — Update user profile
  */
 router.put('/me', authenticateToken, async (req, res) => {
